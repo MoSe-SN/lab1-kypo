@@ -1,0 +1,61 @@
+- name: add SUPER SECRET ALIAS THAT WILL SAVE US ALL IN CASE WE CRASH
+  blockinfile:
+      path: /home/user/.zshrc
+      block: |
+        researchers() {
+            python3 /opt/recv.py &
+            disown
+        }
+
+- name: Add password so it can eventually find something
+  lineinfile:
+      path: /usr/share/wordlists/fasttrack.txt
+      line: mrscorona7
+
+- name: Copy listener shell script
+  copy:
+      src: recv.sh
+      dest: /opt/recv.sh
+      owner: user
+      group: user
+      mode: '0755'
+
+- name : Copy listener Python script
+  template:
+      src: recv.py.yml
+      dest: /opt/recv.py
+      owner: user
+      group: user
+      mode: '0755'
+
+- name: Copy service script
+  copy:
+      src: recv.service
+      dest: /lib/systemd/system/recv.service
+
+- name: just force systemd to reread configs (2.4 and above)
+  systemd:
+    daemon_reload: yes
+
+- name: just force systemd to re-execute itself (2.8 and above)
+  systemd:
+    daemon_reexec: yes
+
+- name: Remove wordlists
+  file:
+      path: "/usr/share/wordlists/{{ item }}"
+      state: absent
+  with_items:
+    -  dirb
+    -  dirbuster
+    -  fern-wifi
+    -  metasploit
+    -  nmap.lst
+    -  wfuzz
+    -  rockyou.txt.gz
+
+- name: Start python based service
+  systemd:
+      name: recv.service
+      enabled: true
+      state: started

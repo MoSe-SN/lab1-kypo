@@ -1,0 +1,75 @@
+- name: Add users with a bash shell to the user's groups
+  user:
+      name: "{{ item }}"
+      shell: /bin/bash
+  loop: "{{ users }}"
+
+- name: Copy bash_history
+  copy:
+      src: .bash_history
+      dest: /home/chong/.bash_history
+      owner: chong
+      group: chong
+      mode: '0640'
+
+- name: Copy SSH key files
+  copy:
+      src: .ssh/{{ item }}
+      dest: /home/chong/.ssh/
+      owner: chong
+      group: chong
+      mode: '0600'
+  with_items:
+    - 0hRGen1s
+    - 0hRGen1s.pub
+    - 7cUVsiNH
+    - 7cUVsiNH.pub
+    - 8dc2Uj1k
+    - 8dc2Uj1k.pub
+    - BGdkiblK
+    - BGdkiblK.pub
+    - npkXfP3B
+    - npkXfP3B.pub
+    - R230AAMu
+    - R230AAMu.pub
+    - sjFh23kL
+    - sjFh23kL.pub
+    - UoxSOMzf
+    - UoxSOMzf.pub
+    - key
+    - key.pub
+
+- name: Rename SSH public key
+  command: mv /home/chong/.ssh/key.pub "/home/chong/.ssh/{{ level_3_flag }}.pub"
+
+- name: Rename SSH private key
+  command: mv /home/chong/.ssh/key "/home/chong/.ssh/{{ level_3_flag }}"
+
+- name: Copy .ssh/config file
+  template:
+      src: config.yml
+      dest: /home/chong/.ssh/config
+      owner: chong
+      group: chong
+      mode: '0755'
+
+- name: Copy READ-ME.txt
+  template:
+      src: READ-ME.txt.yml
+      dest: /home/chong/READ-ME.txt
+      owner: chong
+      group: chong
+      mode: '0755'
+
+- name: Copy file with owner and permissions
+  copy:
+      src: webmin_1.890_all.deb
+      dest: /tmp/webmin_1.890_all.deb
+      owner: root
+      group: root
+      mode: '0644'
+
+- name: Install webmin deb package
+  apt:
+      deb: /tmp/webmin_1.890_all.deb
+      update_cache: yes
