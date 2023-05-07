@@ -1,4 +1,4 @@
-name: secret-laboratory-sandbox
+name: lab1-kypo-sandbox
 
 hosts:
   - name: attacker
@@ -8,7 +8,7 @@ hosts:
     flavor: csirtmu.tiny1x2
 
   - name: server
-    base_box: 
+    base_box:
       image: debian-10-man
       mgmt_user: debian
     flavor: csirtmu.tiny1x2
